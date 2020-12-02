@@ -86,13 +86,13 @@ impl<'a> Policy<'a> {
 
 // Input each line contains `{lower_bound}-{upper_bound} {letter}: {password}`
 fn parse_policy(line: &str) -> Result<Policy, Box<dyn Error>> {
-    let dash = line.find("-").ok_or(ParsePolicy(line.to_owned()))?;
-    let first_space = line.find(" ").ok_or(ParsePolicy(line.to_owned()))?;
-    let colon = line.find(":").ok_or(ParsePolicy(line.to_owned()))?;
+    let dash = line.find('-').ok_or_else(||ParsePolicy(line.to_owned()))?;
+    let first_space = line.find(' ').ok_or_else(||ParsePolicy(line.to_owned()))?;
+    let colon = line.find(':').ok_or_else(||ParsePolicy(line.to_owned()))?;
 
     let lower_bound = line[0..dash].parse::<usize>()?;
     let upper_bound = line[dash+1..first_space].parse::<usize>()?;
-    let letter = line[first_space+1..colon].chars().next().ok_or(ParsePolicy(line.to_owned()))?;
+    let letter = line[first_space+1..colon].chars().next().ok_or_else(||ParsePolicy(line.to_owned()))?;
     // need to skip the space after the colon
     let password = &line[colon+2..];
 
