@@ -25,13 +25,13 @@ Foo
 Bar";
     #[test]
     fn test_read_file() {
-        let content = read_file("assets/helpers/text.txt").unwrap();
+        let content = read_file("../assets/helpers/text.txt").unwrap();
         assert_eq!(TXT_CONTENT, content)
     }
 
     #[test]
     fn test_usize_from_file() {
-        let lines = read_line_usize_from_file("assets/helpers/usize.txt").unwrap();
+        let lines = read_line_usize_from_file("../assets/helpers/usize.txt").unwrap();
         assert_eq!(&vec![1,23,47,1_000_000], &lines)
     }
 }
