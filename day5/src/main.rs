@@ -7,12 +7,15 @@ use thiserror::Error;
 
 fn main() -> Result<(), Box<dyn Error>> {
     let input = read_file("./assets/days/day5.txt")?;
-    let mut tickets = input.lines().map(BoardingPass::try_from).collect::<Result<Vec<_>,_,>>()?;
+    let mut tickets = input
+        .lines()
+        .map(BoardingPass::try_from)
+        .collect::<Result<Vec<_>, _>>()?;
     tickets.sort_by_key(|t| t.seat_id);
 
     // Part 1:  What is the highest seat ID on a boarding pass?
     let highest = tickets.last().ok_or(NoSeatFound)?.seat_id;
-    println!("Highes encountered seat id: {:?}", highest);
+    println!("Highest encountered seat id: {:?}", highest);
 
     // Part 2: Your seat wasn't at the very front or back, though;
     // the seats with IDs +1 and -1 from yours will be in your list.
@@ -58,7 +61,7 @@ pub enum TicketError {
     #[error("SeatNumber {0} should be exactly 10 characters long")]
     UnexpectedLength(String),
     #[error("Row Identifiers {0} should only contain '{1}' or '{2}'")]
-    UnexpectedBinaryToken(String, char,char),
+    UnexpectedBinaryToken(String, char, char),
     #[error("Boarding error, Seat Row {0}, column {1} does not exist!")]
     BoardingError(usize, usize),
     #[error("no Seat found")]
@@ -68,10 +71,16 @@ pub enum TicketError {
 fn binary_partition(input: &str, high: char, low: char) -> Result<usize, TicketError> {
     let mut value = 0;
     for (i, c) in input.chars().rev().enumerate() {
-        if c == high {
+        if c == low {
+            // do nothing
+        } else if c == high {
             value += 2_usize.pow(i as u32)
-        } else if c == low {} else {
-           return Err(TicketError::UnexpectedBinaryToken(input.to_string(), high, low));
+        } else {
+            return Err(TicketError::UnexpectedBinaryToken(
+                input.to_string(),
+                high,
+                low,
+            ));
         }
     }
     Ok(value)
@@ -141,13 +150,13 @@ mod tests {
     #[test]
     fn test_example_raw() {
         // same as above
-        assert_eq!( 44, binary_partition("FBFBBFF",'B', 'F').unwrap());
-        assert_eq!( 5, binary_partition("RLR",'R', 'L').unwrap());
+        assert_eq!(44, binary_partition("FBFBBFF", 'B', 'F').unwrap());
+        assert_eq!(5, binary_partition("RLR", 'R', 'L').unwrap());
     }
 
     #[test]
     fn test_compute_seat_id() {
         // In this example, the seat has ID 44 * 8 + 5 = 357
-        assert_eq!(BoardingPass::compute_seat_id(44,5),357)
+        assert_eq!(BoardingPass::compute_seat_id(44, 5), 357)
     }
 }
