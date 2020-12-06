@@ -1,5 +1,9 @@
 use helpers::read_file;
 use std::error::Error;
+use std::ops::RangeInclusive;
+
+// The form asks a series of 26 yes-or-no questions marked 'a' through 'z'.
+const POSSIBLE_ANSWERS: RangeInclusive<char> = 'a'..='z';
 
 fn main() -> Result<(), Box<dyn Error>> {
 
@@ -10,12 +14,9 @@ fn main() -> Result<(), Box<dyn Error>> {
     // Each group's answers are separated by a blank line, and within each group,
     // each person's answers are on a single line.
     for group in input.split("\n\n") {
-        // The form asks a series of 26 yes-or-no questions marked 'a' through 'z'.
-        let possible_answers = 'a'..='z';
         // Part 1
         // All you need to do is identify the questions for which anyone in your group answers "yes".
-        let any_yes = possible_answers
-            .clone()
+        let any_yes = POSSIBLE_ANSWERS
             .filter(|answer| group.lines().any(|form| form.contains(*answer)))
             // For each group, count the number of questions to which anyone answered "yes".
             // What is the sum of those counts?
@@ -23,7 +24,7 @@ fn main() -> Result<(), Box<dyn Error>> {
         sum_any += any_yes;
         // Part 2
         // you need to identify the questions to which everyone answered "yes"!
-        let all_yes = possible_answers
+        let all_yes = POSSIBLE_ANSWERS
             .filter(|answer| group.lines().all(|form| form.contains(*answer)))
             // For each group, count the number of questions to which everyone answered "yes".
             // What is the sum of those counts?
