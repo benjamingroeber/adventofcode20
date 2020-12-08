@@ -104,11 +104,11 @@ fn parse_content(content: &str) -> Result<Vec<(usize, &str)>, BagError> {
         // split count and color
         let (count, color) = bag
             .find(' ')
-            .and_then(|mid| {
+            .map(|mid| {
                 let (count, color) = bag.split_at(mid);
                 // remove leading space
                 let color = color.trim_start();
-                Some((count, color))
+                (count, color)
             })
             .ok_or_else(|| BagError::SplitContent(bag.to_string()))?;
         let count: usize = count
