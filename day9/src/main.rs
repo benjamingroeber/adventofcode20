@@ -120,8 +120,7 @@ mod tests {
     // previous 5 numbers; the only number that does not follow this rule is 127.
     #[test]
     fn test_example_day1() {
-        let input = read_file("../assets/days/day9_example.txt").unwrap();
-        let numbers: Vec<_> = input.lines().map(|l| l.parse().unwrap()).collect();
+        let numbers = parse_lines_file("../assets/days/day9_example.txt").unwrap();
 
         let cypher = XMASCypher::new(&numbers);
         let first_invalid = cypher.find_first_invalid(5);
@@ -133,8 +132,7 @@ mod tests {
     // from step 1, 127.
     #[test]
     fn test_example_day2() {
-        let input = read_file("../assets/days/day9_example.txt").unwrap();
-        let numbers: Vec<_> = input.lines().map(|l| l.parse().unwrap()).collect();
+        let numbers = parse_lines_file("../assets/days/day9_example.txt").unwrap();
 
         let cypher = XMASCypher::new(&numbers);
 

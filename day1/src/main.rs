@@ -1,14 +1,17 @@
 use itertools::Itertools;
-use helpers::read_line_usize_from_file;
+use helpers::parse_lines_file;
+use std::error::Error;
 
-fn main() {
-    let numbers = read_line_usize_from_file("assets/days/day1.txt").unwrap();
+fn main() -> Result<(), Box<dyn Error>>{
+    let numbers = parse_lines_file("assets/days/day1.txt")?;
     // Part 1
     // Specifically, they need you to find the two entries that sum to 2020 and then multiply those two numbers together.
     day1(&numbers, 2, 2020);
     // Part 2
     // Find _three_ numbers in your expense report that meet the same criteria
     day1(&numbers, 3, 2020);
+
+    Ok(())
 }
 
 fn day1(input: &[usize], n: usize, target: usize) {
