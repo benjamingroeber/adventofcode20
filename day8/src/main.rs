@@ -33,9 +33,9 @@ fn main() -> Result<(), Box<dyn Error>> {
         // Check if modified program terminates
         let mut program = program.clone();
         program.instructions[idx] = substitute;
-        if program.run_until_loop()? {
+        if ExitStatus::Terminated == program.run_until_loop()? {
             println!(
-                "Accumulator when terminating program correctly, substituting op {}: {}",
+                "Accumulator value when terminating program, substituting op {}: {}",
                 idx, program.accumulator
             );
             break
@@ -85,6 +85,12 @@ struct BootCode {
     instructions: Vec<Op>,
 }
 
+#[derive(Copy,Clone,Debug, Eq, PartialEq)]
+enum ExitStatus {
+    Terminated,
+    LoopDetected
+}
+
 impl BootCode {
     fn new(state: Vec<Op>) -> Self {
         BootCode {
@@ -99,7 +105,7 @@ impl BootCode {
     }
 
     // returns true if program terminated
-    fn next_cycle(&mut self) -> Result<bool, BootCodeError> {
+    fn next_cycle(&mut self) -> Result<Option<ExitStatus>, BootCodeError> {
         let op = self.fetch_instruction();
 
         let offset = match op {
@@ -130,22 +136,25 @@ impl BootCode {
         }
 
         // Program terminates if the instruction pointer points to the one right after the last instruction
-        Ok(self.instruction_pointer == self.instructions.len())
+        if self.instruction_pointer == self.instructions.len() {
+            Ok(Some(ExitStatus::Terminated))
+        }  else {
+            Ok(None)
+        }
     }
 
     // true if the program terminates correctly
     // false if the instruction_pointer points to the same instruction twice
-    fn run_until_loop(&mut self) -> Result<bool, BootCodeError> {
+    fn run_until_loop(&mut self) -> Result<ExitStatus, BootCodeError> {
         let mut visited = HashSet::new();
         let mut index = 0_usize;
         loop {
             if visited.contains(&index) {
-                break Ok(false);
+                break Ok(ExitStatus::LoopDetected);
             } else {
                 visited.insert(index);
-                let terminated = self.next_cycle()?;
-                if terminated {
-                    break Ok(true);
+                if let Some(exit_status) = self.next_cycle()? {
+                    break Ok(exit_status);
                 }
                 index = self.instruction_pointer;
             }
