@@ -26,6 +26,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "day11"
+version = "0.1.0"
+dependencies = [
+ "helpers",
+ "itertools",
+ "thiserror",
+]
+
+[[package]]
 name = "day2"
 version = "0.1.0"
 dependencies = [
@@ -102,6 +111,7 @@ checksum = "e78d4f1cc4ae33bbfc157ed5d5a5ef3bc29227303d595861deb238fcec4e9457"
 name = "helpers"
 version = "0.1.0"
 dependencies = [
+ "itertools",
  "thiserror",
 ]
 
