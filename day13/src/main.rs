@@ -23,21 +23,39 @@ fn main() -> Result<(), Box<dyn Error>> {
     // What is the ID of the earliest bus you can take to the airport multiplied by the number of
     // minutes you'll need to wait for that bus?
     println!(
-        "First departure {} at Bus {} - Diff * Bus = {}",
+        "First departure {} at Bus {}: Waiting Time * Bus Interval = {}",
         first_ts,
         bus.interval,
         (first_ts - start_ts) * bus.interval
     );
-    // println!("{}\n{:?} - {:?}", start_ts, schedules, first);
 
     // Part 2
-    // No working solution yet
+    // What is the earliest timestamp such that all of the listed bus IDs depart at offsets matching
+    // their positions in the list?
+    let mut step = 1;
+    let mut timestamp = 0;
+    // we sieve through the timestamps by finding a solution for each bus
+    // when each bus is solved, the condition is reached
+    // combining the solutions is possible by increasing the step size, stepping in multiples of the
+    // bus intervals, once a solution is found
+    for bus in &scheduled_busses {
+        // step in the future until conditions are satisfied also for the current bus
+        while (timestamp + bus.departure_offset) % bus.interval != 0 {
+            timestamp += step;
+        }
+
+        step *= bus.interval;
+    }
+
+    println!("First time when all busses depart at their correct offsets {}", timestamp);
+
+
     Ok(())
 }
 
 #[derive(Copy, Clone, Debug)]
 struct ScheduledBus {
-    idx: Unit,
+    departure_offset: Unit,
     interval: Unit,
 }
 
@@ -58,7 +76,7 @@ fn parse_timestamp_and_schedules(s: &str) -> Result<(Unit, Vec<ScheduledBus>), S
         // .inspect(|c| println!("{:?}", c))
         .map(|(idx, interval)| {
             interval.parse().map(|interval| ScheduledBus {
-                idx: idx as isize,
+                departure_offset: idx as isize,
                 interval,
             })
         })
