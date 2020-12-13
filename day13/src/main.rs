@@ -9,19 +9,19 @@ fn main() -> Result<(), Box<dyn Error>> {
     let input = read_file("./assets/days/day13.txt")?;
     let (start_ts, scheduled_busses) = parse_timestamp_and_schedules(&input)?;
 
+    // Part 1
+    // What is the ID of the earliest bus you can take to the airport multiplied by the number of
+    // minutes you'll need to wait for that bus?
     let (first_ts, bus) = (start_ts..)
-        .filter_map(|ts| {
+        .filter_map(|timestamp| {
             scheduled_busses
                 .iter()
-                .find(|bus| ts % bus.interval == 0)
-                .map(|schedule| (ts, schedule))
+                .find(|bus| timestamp % bus.interval == 0)
+                .map(|schedule| (timestamp, schedule))
         })
         .next()
         .unwrap();
 
-    // Part 1
-    // What is the ID of the earliest bus you can take to the airport multiplied by the number of
-    // minutes you'll need to wait for that bus?
     println!(
         "First departure {} at Bus {}: Waiting Time * Bus Interval = {}",
         first_ts,
@@ -47,8 +47,10 @@ fn main() -> Result<(), Box<dyn Error>> {
         step *= bus.interval;
     }
 
-    println!("First time when all busses depart at their correct offsets {}", timestamp);
-
+    println!(
+        "First time when all busses depart at their correct offsets {}",
+        timestamp
+    );
 
     Ok(())
 }
