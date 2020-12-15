@@ -105,7 +105,7 @@ impl BootCode {
     }
 
     // returns true if program terminated
-    fn next_cycle(&mut self) -> Result<Option<ExitStatus>, BootCodeError> {
+    fn next_cycle(&mut self) -> Option<ExitStatus> {
         let op = self.fetch_instruction();
 
         let offset = match op {
@@ -137,9 +137,9 @@ impl BootCode {
 
         // Program terminates if the instruction pointer points to the one right after the last instruction
         if self.instruction_pointer == self.instructions.len() {
-            Ok(Some(ExitStatus::Terminated))
+            Some(ExitStatus::Terminated)
         }  else {
-            Ok(None)
+            None
         }
     }
 
@@ -153,7 +153,7 @@ impl BootCode {
                 break Ok(ExitStatus::LoopDetected);
             } else {
                 visited.insert(index);
-                if let Some(exit_status) = self.next_cycle()? {
+                if let Some(exit_status) = self.next_cycle() {
                     break Ok(exit_status);
                 }
                 index = self.instruction_pointer;
@@ -240,7 +240,7 @@ mod tests {
         let visited_ops: Vec<_> = (0..8)
             .map(|_| {
                 let next = program.fetch_instruction();
-                program.next_cycle().unwrap();
+                program.next_cycle();
                 next
             })
             .collect();

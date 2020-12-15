@@ -419,9 +419,7 @@ mod tests {
 
         let neighbours_origin: Vec<_> = ferry.neighbours(0, 0).collect();
         let neighbours_middle: Vec<_> = ferry.neighbours(1, 1).collect();
-        println!("START");
         let neighbours_bottom_right : Vec<_> = ferry.neighbours(2, 2).collect();
-        println!("END");
 
         assert_eq!(&neighbours_origin, &vec![SeatEmpty, SeatTaken, SeatTaken]);
         assert_eq!(
