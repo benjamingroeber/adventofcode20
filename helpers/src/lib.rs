@@ -1,11 +1,11 @@
+use itertools::Itertools;
 use std::error::Error;
+use std::fmt::{Display, Formatter};
 use std::fs::File;
 use std::io::Read;
 use std::path::Path;
 use std::str::FromStr;
 use thiserror::Error;
-use std::fmt::{Display, Formatter};
-use itertools::Itertools;
 
 // PARSING
 pub fn parse_lines_file<T: AsRef<Path>, F>(filename: T) -> Result<Vec<F>, HelperError>
@@ -21,7 +21,6 @@ where
         .lines()
         .map(|l| FromStr::from_str(&l).map_err(|_| HelperError::ParsingError))
         .collect()
-
 }
 
 pub fn read_file<T: AsRef<Path>>(filename: T) -> Result<String, Box<dyn Error>> {
@@ -39,6 +38,15 @@ pub fn read_line_usize_from_file<T: AsRef<Path>>(
     Ok(numbers?)
 }
 
+pub fn split_once<'a>(s: &'a str, pat: &str) -> (&'a str, &'a str){
+    if let Some(split_at) = s.find(pat) {
+        let (first, rest) = s.split_at(split_at);
+        (first, &rest[pat.len()..])
+    } else {
+        (s, "")
+    }
+}
+
 // GRID
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct Grid<T> {
@@ -47,10 +55,10 @@ pub struct Grid<T> {
 }
 
 impl<T> Grid<T> {
-   pub  fn with_items(items: Vec<T>, columns: usize) -> Result<Self, GridError> {
+    pub fn with_items(items: Vec<T>, columns: usize) -> Result<Self, GridError> {
         let len = items.len();
         if len % columns == 0 {
-            Ok(Grid{ columns, items })
+            Ok(Grid { columns, items })
         } else {
             Err(GridError::UnevenRowsError(len, columns))
         }
@@ -64,7 +72,9 @@ impl<T> Grid<T> {
         // println!("{}", self.columns);
         if col < self.columns {
             self.items.get(self.get_idx(col, row))
-        } else { None }
+        } else {
+            None
+        }
     }
 
     pub fn num_columns(&self) -> usize {
@@ -72,7 +82,7 @@ impl<T> Grid<T> {
     }
 
     pub fn num_rows(&self) -> usize {
-        self.items.len()/self.columns
+        self.items.len() / self.columns
     }
 
     pub fn set(&mut self, col: usize, row: usize, v: T) {
@@ -92,14 +102,14 @@ impl<T> Grid<T> {
         &self.items
     }
 
-    pub fn items_iter(&self) -> impl Iterator<Item=((usize, usize), &T)> {
+    pub fn items_iter(&self) -> impl Iterator<Item = ((usize, usize), &T)> {
         let rows = self.items.len() / self.columns;
         (0..rows)
             .cartesian_product(0..self.columns)
             .map(move |(row, col)| ((col, row), self.get_unchecked(col, row)))
     }
 
-    pub fn iter(&self) -> impl Iterator<Item=&T> {
+    pub fn iter(&self) -> impl Iterator<Item = &T> {
         self.items.iter()
     }
 }
@@ -129,7 +139,7 @@ pub enum HelperError {
 #[derive(Clone, Copy, Debug, Error)]
 pub enum GridError {
     #[error("{0} items can not be divided among {1} columns")]
-    UnevenRowsError(usize, usize)
+    UnevenRowsError(usize, usize),
 }
 
 #[cfg(test)]

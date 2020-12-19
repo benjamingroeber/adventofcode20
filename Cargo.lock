@@ -154,6 +154,15 @@ name = "day18"
 version = "0.1.0"
 dependencies = [
  "helpers",
+ "itertools",
+ "thiserror",
+]
+
+[[package]]
+name = "day19"
+version = "0.1.0"
+dependencies = [
+ "helpers",
  "thiserror",
 ]
 
