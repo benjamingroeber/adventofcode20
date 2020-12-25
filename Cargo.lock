@@ -195,6 +195,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "day25"
+version = "0.1.0"
+dependencies = [
+ "helpers",
+ "thiserror",
+]
+
+[[package]]
 name = "day3"
 version = "0.1.0"
 dependencies = [
